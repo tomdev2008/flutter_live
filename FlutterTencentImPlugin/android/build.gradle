@@ -1,0 +1,49 @@
+group 'top.huic.tencent_im_plugin'
+version '1.0'
+
+buildscript {
+    repositories {
+        maven{ url 'https://maven.aliyun.com/repository/google' }
+        maven{ url 'https://maven.aliyun.com/repository/jcenter' }
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public'}
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.3'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        maven{ url 'https://maven.aliyun.com/repository/google' }
+        maven{ url 'https://maven.aliyun.com/repository/jcenter' }
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public'}
+        google()
+        jcenter()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 16
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters "armeabi-v7a"
+        }
+        // library 混淆 -> 随 library 引用，自动添加到 apk 打包混淆
+        consumerProguardFiles 'consumer-proguard-rules.txt'
+    }
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+    dependencies {
+        api 'com.tencent.imsdk:imsdk:4.6.1'
+        api 'com.alibaba:fastjson:1.2.55'
+    }
+}
