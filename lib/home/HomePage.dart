@@ -69,7 +69,7 @@ class _HomeWidgetState extends State<_HomeWidget> {
       ),
       padding: EdgeInsets.only(left: 30, top: 40, bottom: 10),
       child: Text(
-          'Hi，欢迎进入直播吧',
+          'Hi，欢迎进入潮鞋直播',
           style: TextStyle(
             color: Color(0xFFffffff),
             fontSize: 20,

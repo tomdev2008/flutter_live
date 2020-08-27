@@ -42,6 +42,9 @@ class _LivePushPageState extends State<LivePushPage> {
       ruddyLevel = 2,
       beautyStyle = 0;
 
+  ///直播人数统计
+  int liveNumber = 0;
+
   void initLogin() async {
     String userSig = await TencentImPlugin.getUserSig(LiveConfig.LIVE_APP_KEY, LiveConfig.LIVE_SECRET_KEY, LiveConfig.LIVE_USER_ID);
     TencentImPlugin.login(identifier: LiveConfig.LIVE_USER_ID, userSig: userSig).then((value) {
@@ -99,14 +102,17 @@ class _LivePushPageState extends State<LivePushPage> {
 
   /// 开始推流
   void startPush() {
-    livePushController.startPush('rtmp://oyy.demo.com/live/test?txSecret=9d09a1c2989d6061875e185a1de6d6f2&txTime=5F46166C').then((value) {
+    livePushController.startPush('rtmp://push.cmbenny.cn/live/chaoxielive?txSecret=207c6b32772d6a15709ef2b9c1051410&txTime=5F4E439B').then((value) {
+      print('创建直播的状态==${value}');
       if (value == 0) {
         setState(() {
           isLive = true;
         });
+        createdGroup();
+      } else {
+        ToastCustom.showToast(msg: '推流失败，错误码：$value');
       }
     });
-    createdGroup();
   }
 
   ///停止推流
@@ -225,6 +231,7 @@ class _LivePushPageState extends State<LivePushPage> {
     }
     TencentImPlugin.removeListener(listener);
     TencentImPlugin.logout();
+    TencentImPlugin.deleteGroup(groupId: LiveConfig.GROUP_ID);
     super.dispose();
   }
 
@@ -247,27 +254,15 @@ class _LivePushPageState extends State<LivePushPage> {
                   height: MediaQuery.of(context).size.height,
                   child: TXCloudPushView(
                     onTXCloudPushViewCreated: onLivePushViewCreated,
-                    onPushEventListener: (args) {
-                      print("onPushEventListener args");
-                      print(args);
-                    },
                   ),
                 ),
                 //左上角头像
                 Positioned(
                     top: 10,
-                    left: 10,
-                    child: Container(
+                    child: isLive ? Container(
                         margin: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                        height: 30,
-                        child: Container()
-                    )
-                ),
-                //人数统计
-                Positioned(
-                    top: 10 + MediaQuery.of(context).padding.top,
-                    right: 15,
-                    child: Container()
+                        child: headerWidget()
+                    ) : SizedBox()
                 ),
                 //弹幕
                 Positioned(
@@ -284,7 +279,7 @@ class _LivePushPageState extends State<LivePushPage> {
                       : Container(),
                 ),
                 Positioned(
-                    bottom: 5,
+                    bottom: 20,
                     child: SafeArea(
                       child: Container(
                           width: MediaQuery.of(context).size.width,
@@ -326,4 +321,67 @@ class _LivePushPageState extends State<LivePushPage> {
       ),
     );
   }
+
+  Widget headerWidget() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: 50,
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          headerLeftWidget(),
+          Container(
+            child: Row(
+              children: <Widget>[
+                LiveTopAvatarWidget(),
+                peopleNumberWidget(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget headerLeftWidget() {
+    return Container(
+      height: 50,
+      child: Row(
+        children: <Widget>[
+          avatarWidget('http://www.cmbenny.cn:9000/file/header1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minio%2F20200827%2F%2Fs3%2Faws4_request&X-Amz-Date=20200827T133125Z&X-Amz-Expires=432000&X-Amz-SignedHeaders=host&X-Amz-Signature=eaaaa94973944608a11574dbefd4685c3d98b7d3df30f948f5494348ff340e1a'),
+          SizedBox(width: 5),
+          Text('潮牌', style: TextStyle(color: Colors.white, fontSize: 15),),
+        ],
+      ),
+    );
+  }
+
+  Widget headerRightWidget() {
+    return Container(
+      height: 50,
+      color: Colors.blue,
+      child: Row(
+        children: <Widget>[
+          avatarWidget('http://www.cmbenny.cn:9000/file/header1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minio%2F20200827%2F%2Fs3%2Faws4_request&X-Amz-Date=20200827T133125Z&X-Amz-Expires=432000&X-Amz-SignedHeaders=host&X-Amz-Signature=eaaaa94973944608a11574dbefd4685c3d98b7d3df30f948f5494348ff340e1a'),
+          SizedBox(width: 5),
+          Text('潮牌', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),),
+        ],
+      ),
+    );
+  }
+
+  Widget peopleNumberWidget() {
+    return Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+           color: Color(0xff808080),
+            borderRadius: BorderRadius.circular(1000)
+        ),
+        alignment: Alignment.center,
+        child: Text('${liveNumber}121', style: TextStyle(color: Color(0xffffffff), fontSize: 15, fontWeight: FontWeight.bold),)
+    );
+  }
+
 }

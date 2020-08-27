@@ -1,12 +1,9 @@
 import 'dart:ui';
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:live/common/style/CustomImage.dart';
 import 'package:live/live/model/BarrageEntity.dart';
 import 'package:live/widget/Toast.dart';
@@ -93,6 +90,67 @@ Widget beautyWidget(double right, {Function onTap}) {
     ),
   );
 }
+
+Widget avatarWidget(String url) {
+  return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(1000)
+      ),
+      child: ClipOval(
+        child: Image.network(
+            url,
+            fit: BoxFit.cover
+        ),
+      )
+  );
+}
+
+///直播头上的横排头像
+class LiveTopAvatarWidget extends StatelessWidget {
+
+  List<String> dataList = ['one', 'two', 'there', 'four'];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 40,
+      child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: dataList.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: itemBuilder
+      ),
+    );
+  }
+
+  Widget itemBuilder(BuildContext context, int index) {
+    String item = dataList[index];
+    switch(item) {
+      case 'one':
+        return
+          headerWidget('http://www.cmbenny.cn:9000/file/header1.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minio%2F20200827%2F%2Fs3%2Faws4_request&X-Amz-Date=20200827T133125Z&X-Amz-Expires=432000&X-Amz-SignedHeaders=host&X-Amz-Signature=eaaaa94973944608a11574dbefd4685c3d98b7d3df30f948f5494348ff340e1a');
+      case 'two':
+        return headerWidget('http://www.cmbenny.cn:9000/file/header2.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minio%2F20200827%2F%2Fs3%2Faws4_request&X-Amz-Date=20200827T133143Z&X-Amz-Expires=432000&X-Amz-SignedHeaders=host&X-Amz-Signature=8e38bf33f4f51cfc182334f5b4b4666f28be4eff33a7a0a3b05650a7ceae0969');
+      case 'there':
+        return headerWidget('http://www.cmbenny.cn:9000/file/header3.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minio%2F20200827%2F%2Fs3%2Faws4_request&X-Amz-Date=20200827T133151Z&X-Amz-Expires=432000&X-Amz-SignedHeaders=host&X-Amz-Signature=bacf15cd9f0987dda46a26f1d5a0a5c2ad83f85cbf463e4163fb5d7a3a5aa13c');
+      case 'four':
+        return headerWidget('http://www.cmbenny.cn:9000/file/header4.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minio%2F20200827%2F%2Fs3%2Faws4_request&X-Amz-Date=20200827T133157Z&X-Amz-Expires=432000&X-Amz-SignedHeaders=host&X-Amz-Signature=02c56c98ec71744e8b0895dcd6f1c9d3498ccc023bc3ce605142f9a03f1d80c0');
+      default:
+        return null;
+    }
+  }
+
+  Widget headerWidget(String url) {
+    return Container(
+      margin: EdgeInsets.only(right: 5),
+      child: avatarWidget(url),
+    );
+  }
+
+}
+
 
 ///直播记时控件
 class LiveTimerWidget extends StatefulWidget {
